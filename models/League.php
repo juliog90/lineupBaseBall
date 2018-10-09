@@ -1,4 +1,8 @@
 <?php
+
+class League
+{
+
 private $Id_Div;
 private $Name_Div;
 
@@ -39,5 +43,5 @@ return json_encode (array(
 'Name_Div'=>$this->Name_Div
 ));
 }
-
+}
 ?>
