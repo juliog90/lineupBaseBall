@@ -6,8 +6,8 @@ class League
 private $idDiv;
 private $nameDiv;
 
-public function getIdDiv() { return $this->IdDiv; }
-public function getNameDiv() { return $this->NameDiv: }
+public function getIdDiv() { return $this->idDiv; }
+public function getNameDiv() { return $this->nameDiv: }
 public function setNameDiv($nameDiv) { $this->nameDiv = $nameDiv; }
 
 public function __construct() {
