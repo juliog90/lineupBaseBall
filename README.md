@@ -1,1 +1,3 @@
-# lineupBaseBall
+# LineUp Baseball Module
+
+School Project
