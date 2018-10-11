@@ -37,10 +37,10 @@ CREATE TABLE IF NOT EXISTS `league` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `equipment`
+-- Estructura de tabla para la tabla `team`
 --
 
-CREATE TABLE IF NOT EXISTS `equipment` (
+CREATE TABLE IF NOT EXISTS `team` (
   `id_E` varchar(10) NOT NULL,
   `name` varchar(30) DEFAULT NULL,
   `id_D` varchar(10) DEFAULT NULL
@@ -84,9 +84,9 @@ ALTER TABLE `league`
   ADD KEY `id_T` (`id_T`);
 
 --
--- Indices de la tabla `equipment`
+-- Indices de la tabla `team`
 --
-ALTER TABLE `equipment`
+ALTER TABLE `team`
   ADD PRIMARY KEY (`id_E`),
   ADD KEY `id_D` (`id_D`);
 
@@ -114,16 +114,16 @@ ALTER TABLE `league`
   ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`id_T`) REFERENCES `season` (`id_T`);
 
 --
--- Filtros para la tabla `equipment`
+-- Filtros para la tabla `team`
 --
-ALTER TABLE `equipment`
-  ADD CONSTRAINT `equipment_ibfk_1` FOREIGN KEY (`id_D`) REFERENCES `league` (`id_D`);
+ALTER TABLE `team`
+  ADD CONSTRAINT `team_ibfk_1` FOREIGN KEY (`id_D`) REFERENCES `league` (`id_D`);
 
 --
 -- Filtros para la tabla `player`
 --
 ALTER TABLE `player`
-  ADD CONSTRAINT `player_ibfk_1` FOREIGN KEY (`id_E`) REFERENCES `equipment` (`id_E`);
+  ADD CONSTRAINT `player_ibfk_1` FOREIGN KEY (`id_E`) REFERENCES `team` (`id_E`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
