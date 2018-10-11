@@ -29,7 +29,7 @@ USE `baseball`;
 --
 
 CREATE TABLE IF NOT EXISTS `league` (
-  `id_D` varchar(10) NOT NULL,
+  `id_L` varchar(10) NOT NULL,
   `name` varchar(30) DEFAULT NULL,
   `id_T` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -41,9 +41,9 @@ CREATE TABLE IF NOT EXISTS `league` (
 --
 
 CREATE TABLE IF NOT EXISTS `team` (
-  `id_E` varchar(10) NOT NULL,
+  `id_T` varchar(10) NOT NULL,
   `name` varchar(30) DEFAULT NULL,
-  `id_D` varchar(10) DEFAULT NULL
+  `id_L` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `player` (
   `date_of_birth` date DEFAULT NULL,
   `Height` float NOT NULL,
   `Weight_p` float NOT NULL,
-  `id_E` varchar(10) DEFAULT NULL
+  `id_T` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -80,22 +80,22 @@ CREATE TABLE IF NOT EXISTS `season` (
 -- Indices de la tabla `league`
 --
 ALTER TABLE `league`
-  ADD PRIMARY KEY (`id_D`),
+  ADD PRIMARY KEY (`id_L`),
   ADD KEY `id_T` (`id_T`);
 
 --
 -- Indices de la tabla `team`
 --
 ALTER TABLE `team`
-  ADD PRIMARY KEY (`id_E`),
-  ADD KEY `id_D` (`id_D`);
+  ADD PRIMARY KEY (`id_T`),
+  ADD KEY `id_L` (`id_L`);
 
 --
 -- Indices de la tabla `player`
 --
 ALTER TABLE `player`
   ADD PRIMARY KEY (`id_p`),
-  ADD KEY `id_E` (`id_E`);
+  ADD KEY `id_T` (`id_T`);
 
 --
 -- Indices de la tabla `season`
@@ -117,13 +117,13 @@ ALTER TABLE `league`
 -- Filtros para la tabla `team`
 --
 ALTER TABLE `team`
-  ADD CONSTRAINT `team_ibfk_1` FOREIGN KEY (`id_D`) REFERENCES `league` (`id_D`);
+  ADD CONSTRAINT `team_ibfk_1` FOREIGN KEY (`id_L`) REFERENCES `league` (`id_L`);
 
 --
 -- Filtros para la tabla `player`
 --
 ALTER TABLE `player`
-  ADD CONSTRAINT `player_ibfk_1` FOREIGN KEY (`id_E`) REFERENCES `team` (`id_E`);
+  ADD CONSTRAINT `player_ibfk_1` FOREIGN KEY (`id_T`) REFERENCES `team` (`id_T`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
