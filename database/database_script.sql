@@ -17,18 +17,18 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `baisbol`
+-- Base de datos: `baseball`
 --
-CREATE DATABASE IF NOT EXISTS `baisbol` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `baisbol`;
+CREATE DATABASE IF NOT EXISTS `baseball` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `baseball`;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `division`
+-- Estructura de tabla para la tabla `league`
 --
 
-CREATE TABLE IF NOT EXISTS `division` (
+CREATE TABLE IF NOT EXISTS `league` (
   `id_D` varchar(10) NOT NULL,
   `name` varchar(30) DEFAULT NULL,
   `id_T` varchar(10) DEFAULT NULL
@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS `season` (
 --
 
 --
--- Indices de la tabla `division`
+-- Indices de la tabla `league`
 --
-ALTER TABLE `division`
+ALTER TABLE `league`
   ADD PRIMARY KEY (`id_D`),
   ADD KEY `id_T` (`id_T`);
 
@@ -108,16 +108,16 @@ ALTER TABLE `season`
 --
 
 --
--- Filtros para la tabla `division`
+-- Filtros para la tabla `league`
 --
-ALTER TABLE `division`
-  ADD CONSTRAINT `division_ibfk_1` FOREIGN KEY (`id_T`) REFERENCES `season` (`id_T`);
+ALTER TABLE `league`
+  ADD CONSTRAINT `league_ibfk_1` FOREIGN KEY (`id_T`) REFERENCES `season` (`id_T`);
 
 --
 -- Filtros para la tabla `equipment`
 --
 ALTER TABLE `equipment`
-  ADD CONSTRAINT `equipment_ibfk_1` FOREIGN KEY (`id_D`) REFERENCES `division` (`id_D`);
+  ADD CONSTRAINT `equipment_ibfk_1` FOREIGN KEY (`id_D`) REFERENCES `league` (`id_D`);
 
 --
 -- Filtros para la tabla `player`
