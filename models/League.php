@@ -18,7 +18,7 @@ class League
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select idDiv, nameDiv from Division where idDiv = ?';
+            $query = 'select id_L, name, id_T from league where idDiv = ?';
             $command = $connection->prepare($query);
             $command-> bind_param('s', func_get_arg(0));
             $command->execute();
