@@ -1,6 +1,6 @@
 {
 	"server": "localhost",
-	"database": "webClass",
+	"database": "baseball",
 	"user": "root",
 	"password": ""
 }
