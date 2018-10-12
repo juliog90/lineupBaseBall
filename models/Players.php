@@ -2,8 +2,10 @@
 
 require_once('connection.php');
 require_once('Team.php');
+require_once('exceptions/recordnotfoundexception.php');
 
     class Player {
+
         private $id;
         private $firstName; 
         private $lastName; 
@@ -37,7 +39,7 @@ require_once('Team.php');
                 $this->firstName = "";
                 $this->lastName = "";
                 $this->team = new Team();
-                $this->dateOfBirth = 0;
+                $this->dateOfBirth = new DateTime();
                 $this->heigth = "";
                 $this->weigth = "";
             }
@@ -55,7 +57,7 @@ require_once('Team.php');
                     $this->firstName = $first_name;
                     $this->lastName = $last_name;
                     $this->team = new Team($id_T);
-                    $this->dateOfBirth = $date_of_birth;
+                    $this->dateOfBirth = new DateTime($date_of_birth);
                     $this->heigth = $Heigth;
                     $this->weigth = $Weigth_p;
                 } 
