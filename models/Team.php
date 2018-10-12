@@ -1,5 +1,6 @@
 <?php
 
+require_once('League.php');
 require_once('connection.php');
 require_once('exceptions/recordnotfoundexception.php');
 
@@ -20,7 +21,7 @@ require_once('exceptions/recordnotfoundexception.php');
             if(func_num_args() == 0) {
                 $this->id = 0;
                 $this->name = "";
-                $this->league = "";
+                $this->league = new League();
             }
 
             if(func_num_args() == 1) {
@@ -34,7 +35,7 @@ require_once('exceptions/recordnotfoundexception.php');
                 if($command->fetch()) {
                     $this->id = $idTeam;
                     $this->name = $name;
-                    $this->league = $league;
+                    $this->league = new League($idTeam);
                 } 
                 else 
                     throw new RecordNotFoundException(func_get_arg(0));
@@ -51,7 +52,7 @@ require_once('exceptions/recordnotfoundexception.php');
             return json_encode(array(
                 'id'=>$this->id,
                 'name'=>$this->name,
-                'league'=>$this->league,
+                'league'=>json_decode($this->league->toJson())
             ));
         }
     }
