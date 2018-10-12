@@ -6,7 +6,7 @@
 		public static function getConnection()
 		{
 			//read config
-			$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/20184a/contacts/config/connection.json');
+			$data = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/lineup/config/connection.json');
 			$config = json_decode($data, true);
 			//parameters
 			if (isset($config['server'])) 
