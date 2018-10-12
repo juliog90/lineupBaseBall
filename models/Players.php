@@ -10,7 +10,6 @@ require_once('exceptions/recordnotfoundexception.php');
         private $firstName; 
         private $lastName; 
         private $dateOfBirth;
-        private $age;
         private $heigth;
         private $weigth;
         private $team;
@@ -34,7 +33,6 @@ require_once('exceptions/recordnotfoundexception.php');
             return $timeInterval->format('%y');
         }
 
-
         public function getWeigth() { return $this->weigth; }
         public function setWeigth($weigth) { $this->weigth = $weigth; }
 
@@ -48,7 +46,6 @@ require_once('exceptions/recordnotfoundexception.php');
                 $this->lastName = "";
                 $this->team = new Team();
                 $this->dateOfBirth = new DateTime();
-                $this->age = "";
                 $this->heigth = "";
                 $this->weigth = "";
             }
