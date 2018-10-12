@@ -25,7 +25,7 @@ require_once('exceptions/recordnotfoundexception.php');
 
             if(func_num_args() == 1) {
                 $connection = MySqlConnection::getConnection();
-                $query = 'select id_T, name, id_L from team where league = ?';
+                $query = 'select id_T, name, id_L from team where id_T = ?';
                 $command = $connection->prepare($query);
                 $id = func_get_arg(0);
                 $command->bind_param('s', $id);
@@ -40,7 +40,7 @@ require_once('exceptions/recordnotfoundexception.php');
                     throw new RecordNotFoundException(func_get_arg(0));
             }
 
-            if(func_num_args() == 6) {
+            if(func_num_args() == 3) {
                 $this->id = func_get_arg(0);
                 $this->name = func_get_arg(1);
                 $this->league = func_get_arg(2);
