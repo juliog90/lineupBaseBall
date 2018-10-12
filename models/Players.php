@@ -1,6 +1,7 @@
 <?php
 
 require_once('connection.php');
+require_once('Team.php');
 
     class Player {
         private $id;
@@ -27,12 +28,15 @@ require_once('connection.php');
         public function getWeigth() { return $this->weigth; }
         public function setWeigth($weigth) { $this->weigth = $weigth; }
 
+        public function getTeam() { return $this->team; }
+        public function setTeam($team) { $this->team = $team; }
+
         public function __construct() {
             if(func_num_args() == 0) {
                 $this->id = 0;
                 $this->firstName = "";
                 $this->lastName = "";
-                $this->team = "";
+                $this->team = new Team();
                 $this->dateOfBirth = 0;
                 $this->heigth = "";
                 $this->weigth = "";
@@ -50,7 +54,7 @@ require_once('connection.php');
                     $this->id = $id_p;
                     $this->firstName = $first_name;
                     $this->lastName = $last_name;
-                    $this->team = $id_T;
+                    $this->team = new Team($id_T);
                     $this->dateOfBirth = $date_of_birth;
                     $this->heigth = $Heigth;
                     $this->weigth = $Weigth_p;
@@ -62,7 +66,7 @@ require_once('connection.php');
             if(func_num_args() == 6) {
                 $this->id = func_get_arg(0);
                 $this->firstName = func_get_arg(1);
-                $this->team = func_get_arg(2);
+                $this->team = new Team(func_get_arg(2));
                 $this->dateOfBirth = func_get_arg(3);
                 $this->heigth = func_get_arg(4);
                 $this->weigth = func_get_arg(5);
@@ -75,7 +79,7 @@ require_once('connection.php');
                 'id'=>$this->id,
                 'firstName'=>$this->firstName,
                 'lastName'=>$this->lastName,
-                'team'=>$this->team,
+                'team'=>json_decode($this->team->toJson()),
                 'dateOfBirth'=>$this->dateOfBirth,
                 'heigth'=>$this->heigth,
                 'weigth'=>$this->weigth
