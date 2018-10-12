@@ -2,5 +2,5 @@
 	"server": "localhost",
 	"database": "webClass",
 	"user": "root",
-	"password": "mypassword"
+	"password": ""
 }
