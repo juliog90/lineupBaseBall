@@ -10,6 +10,7 @@ require_once('exceptions/recordnotfoundexception.php');
         private $firstName; 
         private $lastName; 
         private $dateOfBirth;
+        private $age;
         private $heigth;
         private $weigth;
         private $team;
@@ -27,6 +28,13 @@ require_once('exceptions/recordnotfoundexception.php');
         public function getHeigth() { return $this->heigth; }
         public function setHeigth($heigth) { $this->heigth = $heigth; }
 
+        public function getAge() { 
+            $actualDate = new DateTime();
+            $timeInterval = $actualDate->diff($this->dateOfBirth);
+            return $timeInterval->format('%y');
+        }
+
+
         public function getWeigth() { return $this->weigth; }
         public function setWeigth($weigth) { $this->weigth = $weigth; }
 
@@ -40,6 +48,7 @@ require_once('exceptions/recordnotfoundexception.php');
                 $this->lastName = "";
                 $this->team = new Team();
                 $this->dateOfBirth = new DateTime();
+                $this->age = "";
                 $this->heigth = "";
                 $this->weigth = "";
             }
@@ -57,7 +66,7 @@ require_once('exceptions/recordnotfoundexception.php');
                     $this->firstName = $first_name;
                     $this->lastName = $last_name;
                     $this->team = new Team($id_T);
-                    $this->dateOfBirth = new DateTime($date_of_birth);
+                    $this->dateOfBirth = DateTime::createFromFormat('Y-m-d', $date_of_birth);
                     $this->heigth = $Heigth;
                     $this->weigth = $Weigth_p;
                 } 
@@ -81,8 +90,9 @@ require_once('exceptions/recordnotfoundexception.php');
                 'id'=>$this->id,
                 'firstName'=>$this->firstName,
                 'lastName'=>$this->lastName,
-                'team'=>json_decode($this->team->toJson()),
-                'dateOfBirth'=>$this->dateOfBirth,
+                'team'=> json_decode($this->team->toJson()),
+                'dateOfBirth'=>$this->dateOfBirth->format('Y-m-d'),
+                'age' => $this->getAge(),
                 'heigth'=>$this->heigth,
                 'weigth'=>$this->weigth
             ));
