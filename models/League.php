@@ -1,7 +1,7 @@
 <?php
 
-require_once('models/League');
-require_once('exception/recordnotfoundexception.php');
+require_once('models/League.php');
+require_once('exceptions/recordnotfoundexception.php');
 
 class League
 {
