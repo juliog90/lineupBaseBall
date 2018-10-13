@@ -55,7 +55,7 @@ class League
         return json_encode (array(
         'id'=>$this->id,
         'name'=>$this->name,
-        'season' => json_encode($this->season->toJson())
+        'season' => json_decode($this->season->toJson())
     ));
     }
 
