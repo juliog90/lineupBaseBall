@@ -1,5 +1,8 @@
 <?php
 
+require_once('models/League');
+require_once('exception/recordnotfoundexception.php');
+
 class League
 {
 
@@ -52,7 +55,7 @@ class League
         return json_encode (array(
         'id'=>$this->id,
         'name'=>$this->name,
-        'season' => json_decode($this->season->toJson())
+        'season' => json_encode($this->season->toJson())
     ));
     }
 
