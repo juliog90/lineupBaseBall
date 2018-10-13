@@ -35,7 +35,7 @@ class League
         if($command->fetch()) {
             $this->id = $id;
             $this->name = $name;
-            $this->season = $season;
+            $this->season = new Season($season);
         } 
         else 
             throw new RecordNotFoundException(func_get_arg(0));
@@ -52,7 +52,7 @@ class League
         return json_encode (array(
         'id'=>$this->id,
         'name'=>$this->name,
-        'season' => $this->season
+        'season' => json_decode($this->season->toJson())
     ));
     }
 
