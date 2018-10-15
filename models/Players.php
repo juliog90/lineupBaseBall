@@ -69,23 +69,67 @@ require_once('exceptions/recordnotfoundexception.php');
                 } 
                 else 
                     throw new RecordNotFoundException(func_get_arg(0));
+
+                mysqli_stmt_close($command);
+                $connection->close();
             }
 
             if(func_num_args() == 6) {
                 $this->id = func_get_arg(0);
                 $this->firstName = func_get_arg(1);
-                $this->team = new Team(func_get_arg(2));
-                $this->dateOfBirth = func_get_arg(3);
-                $this->heigth = func_get_arg(4);
-                $this->weigth = func_get_arg(5);
-                $this->lastName = func_get_arg(6);
+                $this->lastName = func_get_arg(2);
+                $this->team = new Team(func_get_arg(3));
+                $this->dateOfBirth = new DateTime::createFromFormat('Y-m-d', func_get_arg(4));
+                $this->heigth = func_get_arg(5);
+                $this->weigth = func_get_arg(6);
             }
         }
 
-        public static function getPlayers()
+        public static function getAll()
         {
+            $players = new array();
+            $connection = MySqlServerConnection::getConnection();
+            $query = 'getAllPlayers()';
+            $command = $connecion->prepare($query);
+            $command->execute();  
+            $command->bind_result($id, $firstName, $lastName, $team, $dateOfBirth, $height, $weight);
+            while($command->fetch())
+            {
+                array_push($players, new Player($id, $firstName, $lastName, $team, $dateOfBirth, $height, $weight);
+            }
 
+            mysqli_stmt_close($command);
+            $connection->close();
+
+            return $players;
         }
+            
+        public function add()
+        {
+            $connection = MySqlServerConnection::getConnection();
+            $statement = 'addPlayer(?, ?, ?, ?, ?, ?)';
+            $id = $this->id;
+            $firstName = $this->firstName;
+            $lastName = $this->lastName;
+            $team = $this->team;
+            $dateOfBirth = $this->dateOfBirth;
+            $height = $this->height;
+            $weight = $this->weight;
+            $command->bind_param('ississs',
+            $command = $connection->prepare($statement);
+            $result = $command->execute();
+            mysqli_stmt_close($command);
+            $connection->close();
+
+            return $result;
+        }
+
+        /* public function edit() */
+        /* { */
+        /*     $connection = MySqlServerConnection::getConnection(); */
+        /*     $statement = 'editPlayer(?, ?, ?, ?, ?, ?)'; */
+        /*     $ */
+
 
         public function toJson() {
             return json_encode(array(
