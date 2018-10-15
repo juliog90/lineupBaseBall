@@ -57,15 +57,15 @@ require_once('exceptions/recordnotfoundexception.php');
                 $id = func_get_arg(0);
                 $command->bind_param('s', $id);
                 $command->execute();
-                $command->bind_result($first_name, $last_name, $id_p, $date_of_birth, $Heigth, $Weigth_p, $id_T);
+                $command->bind_result($firstName, $lastName, $idP, $dateOfBirth, $heigth, $weigth, $idT);
                 if($command->fetch()) {
-                    $this->id = $id_p;
-                    $this->firstName = $first_name;
-                    $this->lastName = $last_name;
-                    $this->team = new Team($id_T);
-                    $this->dateOfBirth = DateTime::createFromFormat('Y-m-d', $date_of_birth);
-                    $this->heigth = $Heigth;
-                    $this->weigth = $Weigth_p;
+                    $this->id = $idP;
+                    $this->firstName = $firstName;
+                    $this->lastName = $lastName;
+                    $this->team = new Team($idT);
+                    $this->dateOfBirth = DateTime::createFromFormat('Y-m-d', $dateOfBirth);
+                    $this->heigth = $heigth;
+                    $this->weigth = $weigth;
                 } 
                 else 
                     throw new RecordNotFoundException(func_get_arg(0));
@@ -80,6 +80,11 @@ require_once('exceptions/recordnotfoundexception.php');
                 $this->weigth = func_get_arg(5);
                 $this->lastName = func_get_arg(6);
             }
+        }
+
+        public static function getPlayers()
+        {
+
         }
 
         public function toJson() {
