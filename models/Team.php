@@ -4,58 +4,159 @@ require_once('League.php');
 require_once('connection.php');
 require_once('exceptions/recordnotfoundexception.php');
 
-    class Team {
+class Team {
 
-        private $id;
-        private $name; 
-        private $league; 
+    private $id;
+    private $name; 
+    private $league; 
 
-        public function getId() { return $this->id; }
-        public function getName() { return $this->name; }
-        public function setName($name) { $this->name = $name; }
+    public function getId() { return $this->id; }
+    public function getName() { return $this->name; }
+    public function setName($name) { $this->name = $name; }
 
-        public function getLeague() { return $this->league; }
-        public function setLeague($league) { $this->league = $league; }
+    public function getLeague() { return $this->league; }
+    public function setLeague($league) { $this->league = $league; }
 
-        public function __construct() {
-            if(func_num_args() == 0) {
-                $this->id = 0;
-                $this->name = "";
-                $this->league = new League();
-            }
-
-            if(func_num_args() == 1) {
-                $connection = MySqlConnection::getConnection();
-                $query = 'select id_T, name, id_L from team where id_T = ?';
-                $command = $connection->prepare($query);
-                $id = func_get_arg(0);
-                $command->bind_param('s', $id);
-                $command->execute();
-                $command->bind_result($idTeam, $name, $league);
-                if($command->fetch()) {
-                    $this->id = $idTeam;
-                    $this->name = $name;
-                    $this->league = new League($idTeam);
-                } 
-                else 
-                    throw new RecordNotFoundException(func_get_arg(0));
-            }
-
-            if(func_num_args() == 3) {
-                $this->id = func_get_arg(0);
-                $this->name = func_get_arg(1);
-                $this->league = func_get_arg(2);
-            }
+    public function __construct() {
+        if(func_num_args() == 0) {
+            $this->id = 0;
+            $this->name = "";
+            $this->league = new League();
         }
 
-        public function toJson() {
-            return json_encode(array(
-                'id'=>$this->id,
-                'name'=>$this->name,
-                'league'=>json_decode($this->league->toJson())
-            ));
+        if(func_num_args() == 1) {
+            $connection = MySqlConnection::getConnection();
+            $query = 'select id_T, name, id_L from team where id_T = ?';
+            $command = $connection->prepare($query);
+            $id = func_get_arg(0);
+            $command->bind_param('s', $id);
+            $command->execute();
+            $command->bind_result($idTeam, $name, $league);
+            if($command->fetch()) {
+                $this->id = $idTeam;
+                $this->name = $name;
+                $this->league = new League($idTeam);
+            } 
+            else 
+                throw new RecordNotFoundException(func_get_arg(0));
+
+            mysqli_stmt_close($command);
+            $connection->close();
+        }
+
+        if(func_num_args() == 3) {
+            $this->id = func_get_arg(0);
+            $this->name = func_get_arg(1);
+            $this->league = func_get_arg(2);
         }
     }
 
+    public function getTeamPlayers()
+    {
+        $teamPlayers = array();
+        $connection = MySqlConnection::getConnection();
+        $query = 'getTeamPlayers(?)';
+        $command = $connection->prepare($query);
+        $teamId = $this->id;
+        $command->bind_param('i', $teamId);
+        $command->execute();
+        // get players code placeholder
+        $command->bind_result($playerId);
+        while($command->fetch())
+        {
+            array_push($teamPlayers, new Player($playerId));
+        }
+
+        mysqli_stmt_close($command);
+        $connection->close();
+    }
+
+    public function getAllTeams()
+    {
+        $allTeams = array();
+        $connection = MySqlConnection::getConnection();
+        $query = 'getAllTeams()';
+        $command->prepare($query);
+        $command->execute();
+        // placeholder database fetching
+        $command->bind_result($id);
+
+        while($command->fetch())
+        {
+            array_push($allTeams, new Team($id));
+        }
+
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        return $allTeams;
+    }
+
+    public function getTeamPlayersToJson()
+    {
+        $playersJson = array();
+
+        foreach(self::getPlayers() as $player)
+        {
+            array_push($playersJson, $player->toJson());
+        }
+
+        return $playersJson;
+    }
+
+    public static function getFullToJson()
+    {
+        $players = array();
+
+        foreach($this->getTeamPlayersToJson() as $player)
+        {
+            array_push($players, json_decode($player->toJson()));
+        }
+
+        return json_encode(
+            array('id' => $this->id,
+            'name' => $this->name,
+            'league' => $this->league,
+            'players' => $players));
+    }
+
+    public function toJson() {
+        return json_encode(array(
+            'id'=>$this->id,
+            'name'=>$this->name,
+            'league'=>json_decode($this->league->toJson())
+        ));
+    }
+
+    public function remove()
+    {
+        $connection = MySqlConnection::getConnection();
+        $statement = 'removeTeam(?)';
+        $command = $connection->prepare($statement);
+        $id = $this->id;
+        $command->bind_param('i', $id);
+        $result = $command->execute();
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        return $result;
+    }
+
+    public function edit()
+    {
+        $connection = MySqlConnection::getConnection();
+        $statement = 'editTeam(?)';
+        $command = $connection->prepare($statement);
+        $id = $this->id;
+        $name = $this->name;
+        $leagueId = $this->league->id;
+        $command->bind_param('isi', $id, $name, $leagueId);
+        $result = $command->execute();
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        return $result;
+    }
+}
 
 ?>
