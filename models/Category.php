@@ -22,7 +22,7 @@ class Category
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select id_L, name, id_S from league where id_L = ?';
+            $query = 'getCategory(?)';
             $command = $connection->prepare($query);
             $id = func_get_arg(0);
             $command->bind_param('s', $id);
@@ -60,7 +60,7 @@ class Category
     public function remove()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'placeholder';    
+        $statement = 'rmCategory()';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
@@ -73,7 +73,7 @@ class Category
     public function edit()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'placeholder';
+        $statement = 'editCategory()';
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
@@ -87,7 +87,7 @@ class Category
     {
         $categories = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'placeholder';
+        $query = 'getCategories()';
         $command = $connection->prepare($statment);
         $command->execute();
 
