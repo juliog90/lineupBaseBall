@@ -7,65 +7,84 @@ require_once('exceptions/recordnotfoundexception.php');
     class Player {
 
         private $id;
+        private $team;
+        private $nickname;
         private $firstName; 
         private $lastName; 
-        private $dateOfBirth;
-        private $heigth;
-        private $weigth;
-        private $team;
+        private $birthdate;
+        private $debut;
+        private $image;
+        private $number;
+        private $stats;
 
         public function getId() { return $this->id; }
+
+        public function getTeam() { return $this->team; }
+        public function setTeam($team) { $this->team = $team; }
+
+        public function getNickname() { return $this->nickname; }
+        public function setNickname($nickname) { $this->nickname = $nickname; }
+
         public function getFirstName() { return $this->firstName; }
         public function setFirstName($firstName) { $this->firstName = $firstName; }
 
         public function getLastName() { return $this->lastName; }
         public function setLastName($lastName) { $this->lastName = $lastName; }
 
-        public function getDateOfBirth() { return $this->dateOfBirth; }
-        public function setDateOfBirth($dateOfBirth) { $this->dateOfBirth = $dateOfBirth; }
+        public function getBirthdate() { return $this->birthdate; }
+        public function setBirthdate($birthdate) { $this->birthdate = $birthdate; }
 
-        public function getHeigth() { return $this->heigth; }
-        public function setHeigth($heigth) { $this->heigth = $heigth; }
+        public function getDebut() { return $this->debut; }
+        public function setDebut($debut) { $this->debut = $debut; }
+
+        public function getImage() { return $this->image; }
+        public function setImage($image) { $this->image = $image; }
+
+        public function getNumber() { return $this->number; }
+        public function setNumber($number) { $this->number = $number; }
+
+        public function getStats() { return $this->stats; }
+        public function setStats($stats) { $this->stats = $stats; }
 
         public function getAge() { 
             $actualDate = new DateTime();
-            $timeInterval = $actualDate->diff($this->dateOfBirth);
+            $timeInterval = $actualDate->diff($this->birthdate);
             return $timeInterval->format('%y');
         }
-
-        public function getWeigth() { return $this->weigth; }
-        public function setWeigth($weigth) { $this->weigth = $weigth; }
-
-        public function getTeam() { return $this->team; }
-        public function setTeam($team) { $this->team = $team; }
 
         public function __construct() {
             if(func_num_args() == 0) {
                 $this->id = 0;
+                $this->team = new Team();
+                $this->nickname = "";
                 $this->firstName = "";
                 $this->lastName = "";
-                $this->team = new Team();
-                $this->dateOfBirth = new DateTime();
-                $this->heigth = "";
-                $this->weigth = "";
+                $this->birthdate = new DateTime();
+                $this->debut = new DateTime();
+                $this->image = "";
+                $this->number = 0;
+                $this->stats = 0;
             }
 
             if(func_num_args() == 1) {
                 $connection = MySqlConnection::getConnection();
-                $query = 'select first_name, last_name, id_p, date_of_birth, Height, Weight_p, id_T from player where id_p = ?';
+                $query = 'getPlayer(?)';
                 $command = $connection->prepare($query);
-                $id = func_get_arg(0);
-                $command->bind_param('s', $id);
+                $idTemp = func_get_arg(0);
+                $command->bind_param('i', $idTemp);
                 $command->execute();
-                $command->bind_result($firstName, $lastName, $idP, $dateOfBirth, $heigth, $weigth, $idT);
+                $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
                 if($command->fetch()) {
-                    $this->id = $idP;
+                    $this->id = $id;
+                    $this->team = new Team($team);
+                    $this->nickname = $nickname;
                     $this->firstName = $firstName;
                     $this->lastName = $lastName;
-                    $this->team = new Team($idT);
-                    $this->dateOfBirth = DateTime::createFromFormat('Y-m-d', $dateOfBirth);
-                    $this->heigth = $heigth;
-                    $this->weigth = $weigth;
+                    $this->birthdate = DateTime::createFromFormat('Y-m-d', $birthdate);
+                    $this->debut = DateTime::createFromFormat('Y-m-d', $debut);
+                    $this->image = $image;
+                    $this->number = $number;
+                    $this->stats = new Stats();
                 } 
                 else 
                     throw new RecordNotFoundException(func_get_arg(0));
@@ -74,28 +93,31 @@ require_once('exceptions/recordnotfoundexception.php');
                 $connection->close();
             }
 
-            if(func_num_args() == 6) {
+            if(func_num_args() == 10) {
                 $this->id = func_get_arg(0);
-                $this->firstName = func_get_arg(1);
-                $this->lastName = func_get_arg(2);
-                $this->team = new Team(func_get_arg(3));
-                $this->dateOfBirth = new DateTime::createFromFormat('Y-m-d', func_get_arg(4));
-                $this->heigth = func_get_arg(5);
-                $this->weigth = func_get_arg(6);
+                $this->team = new Team(func_get_arg(1));
+                $this->nickname = func_get_arg(2);
+                $this->firstName = func_get_arg(3);
+                $this->lastName = func_get_arg(4);
+                $this->birthdate = func_get_arg(5);
+                $this->debut = func_get_arg(6);
+                $this->image = func_get_arg(7);
+                $this->number = func_get_arg(8);
+                $this->stats = func_get_arg(9);
             }
         }
 
         public static function getAll()
         {
-            $players = new array();
+            $players = array();
             $connection = MySqlServerConnection::getConnection();
             $query = 'getAllPlayers()';
             $command = $connecion->prepare($query);
             $command->execute();  
-            $command->bind_result($id, $firstName, $lastName, $team, $dateOfBirth, $height, $weight);
+            $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
             while($command->fetch())
             {
-                array_push($players, new Player($id, $firstName, $lastName, $team, $dateOfBirth, $height, $weight);
+                array_push($players, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats));
             }
 
             mysqli_stmt_close($command);
@@ -103,19 +125,58 @@ require_once('exceptions/recordnotfoundexception.php');
 
             return $players;
         }
+
+        public function remove()
+        {
+            $connection = MySqlConnection::getConnection(); 
+            $statement = 'rmPlayer(?)';    
+            $command = $connection->prepare($statement);
+            $id = $this->id;
+            $command->bind_param('i', $id);
+            $result = $command->execute();
+
+            mysqli_stmt_close($command);
+            $connection->close();
+        }
+
+        public function edit()
+        {
+            $connection = MySqlConnection::getConnection(); 
+            $statement = 'editCategory(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            $command = $connection->prepare($statement);
+            $id = $this->id;
+            $team = $this->team->id;
+            $nickname = $this->nickname;
+            $firstName = $this->firstName;
+            $lastName = $this->lastName;
+            $birthdate = $createFromFormat('Y-m-d', $this->birthdate);
+            $debut = $createFromFormat('Y-m-d', $this->debut);
+            $image = $this->image;
+            $lastName = $this->lastName;
+            $lastName = $this->lastName;
+
+            $command->bind_param('i', $id);
+            $result = $command->execute();
+
+            mysqli_stmt_close($command);
+            $connection->close();
+        }
             
         public function add()
         {
             $connection = MySqlServerConnection::getConnection();
-            $statement = 'addPlayer(?, ?, ?, ?, ?, ?)';
+            $statement = 'addPlayer(?, ?, ?, ?, ?, ?, ?, ?, ?)';
             $id = $this->id;
+            $team = $this->team->id;
+            $nickname = $this->nickname;
             $firstName = $this->firstName;
             $lastName = $this->lastName;
-            $team = $this->team;
-            $dateOfBirth = $this->dateOfBirth;
-            $height = $this->height;
-            $weight = $this->weight;
-            $command->bind_param('ississs',
+            $birthdate = $createFromFormat('Y-m-d', $this->birthdate);
+            $debut = $createFromFormat('Y-m-d', $this->debut);
+            $image = $this->image;
+            $number = $this->number;
+            $stats = $this->stats;
+            $command->bind_param('issssssii',  $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
             $command = $connection->prepare($statement);
             $result = $command->execute();
             mysqli_stmt_close($command);
@@ -124,26 +185,37 @@ require_once('exceptions/recordnotfoundexception.php');
             return $result;
         }
 
-        /* public function edit() */
-        /* { */
-        /*     $connection = MySqlServerConnection::getConnection(); */
-        /*     $statement = 'editPlayer(?, ?, ?, ?, ?, ?)'; */
-        /*     $ */
+        public static function getAllToJson()
+        {
+            $playersJson = array();
+            $players = self::getAll();
 
+            foreach ($players as $value) {
+                array_push($playersJson, json_decode($value->toJson()));    
+            }
+
+            return json_encode(array(
+                'players' => json_decode($playersJson)
+            ));
+        }
 
         public function toJson() {
             return json_encode(array(
                 'id'=>$this->id,
+                'team'=> json_decode($this->team->toJson()),
+                'nickname'=>$this->nickname,
                 'firstName'=>$this->firstName,
                 'lastName'=>$this->lastName,
-                'team'=> json_decode($this->team->toJson()),
-                'dateOfBirth'=>$this->dateOfBirth->format('Y-m-d'),
-                'age' => $this->getAge(),
-                'heigth'=>$this->heigth,
-                'weigth'=>$this->weigth
+                'birthdate'=>$this->birthdate->format('Y-m-d'),
+                'debut'=>$this->debut->format('Y-m-d'),
+                'image'=>$this->image,
+                'number'=>$this->number,
+                'stats'=> json_decode($this->stats->toJson()),
+                'age' => $this->getAge()
             ));
         }
     }
 
 
+                    /* $this->image = $_SERVER['DOCUMENT_ROOT'].'/lineup/images/'.$image; */
 ?>
