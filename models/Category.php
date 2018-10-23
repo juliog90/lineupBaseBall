@@ -46,12 +46,11 @@ class Category
     public function add()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'placeholder';
+        $statement = 'addCategory(?)';
         $command = $connection->prepare($statement);
-        $id = $this->id;
-        $command->bind_param('i', $id);
+        $name = $this->name;
+        $command->bind_param('s', $name);
         $result = $command->execute();
-
 
         mysqli_stmt_close($command);
         $connection->close();
@@ -60,7 +59,7 @@ class Category
     public function remove()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'rmCategory()';    
+        $statement = 'rmCategory(?)';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
@@ -73,10 +72,11 @@ class Category
     public function edit()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'editCategory()';
+        $statement = 'editCategory(?, ?)';
         $command = $connection->prepare($statement);
         $id = $this->id;
-        $command->bind_param('i', $id);
+        $name = $this->name;
+        $command->bind_param('is', $id, $name);
         $result = $command->execute();
 
         mysqli_stmt_close($command);
@@ -90,9 +90,10 @@ class Category
         $query = 'getCategories()';
         $command = $connection->prepare($statment);
         $command->execute();
+        $command->bind_result($id, $name);
 
         while ($command->fetch) {
-           array_push($categories, new Category($id)); 
+           array_push($categories, new Category($id, $name)); 
         }
     }
 
