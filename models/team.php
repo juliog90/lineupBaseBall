@@ -1,8 +1,8 @@
 <?php
 
-require_once('Category.php');
-require_once('Coach.php');
-require_once('TeamStats.php');
+require_once('category.php');
+require_once('coach.php');
+require_once('teamstats.php');
 require_once('connection.php');
 require_once('exceptions/recordnotfoundexception.php');
 
@@ -182,5 +182,4 @@ class Team {
         return $result;
     }
 }
-
 ?>

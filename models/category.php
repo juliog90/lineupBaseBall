@@ -1,6 +1,6 @@
 <?php
 
-require_once('models/Category.php');
+require_once('models/category.php');
 require_once('exceptions/recordnotfoundexception.php');
 
 class Category
@@ -115,8 +115,8 @@ class Category
         return json_encode (array(
         'id'=>$this->id,
         'name'=>$this->name,
-    ));
-    }
+        ));
 
+    }
 }
 ?>

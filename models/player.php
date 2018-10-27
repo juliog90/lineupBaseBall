@@ -1,7 +1,7 @@
 <?php
-
+    
 require_once('connection.php');
-require_once('Team.php');
+require_once('team.php');
 require_once('exceptions/recordnotfoundexception.php');
 
     class Player {
@@ -215,7 +215,4 @@ require_once('exceptions/recordnotfoundexception.php');
             ));
         }
     }
-
-
-                    /* $this->image = $_SERVER['DOCUMENT_ROOT'].'/lineup/images/'.$image; */
 ?>
