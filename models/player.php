@@ -2,6 +2,7 @@
     
 require_once('connection.php');
 require_once('team.php');
+require_once 'models/playerstats.php';
 require_once('exceptions/recordnotfoundexception.php');
 
     class Player {
@@ -63,7 +64,7 @@ require_once('exceptions/recordnotfoundexception.php');
                 $this->debut = new DateTime();
                 $this->image = "";
                 $this->number = 0;
-                $this->stats = 0;
+                $this->stats = new PlayerStats();
             }
 
             if(func_num_args() == 1) {
@@ -152,8 +153,8 @@ require_once('exceptions/recordnotfoundexception.php');
             $birthdate = $createFromFormat('Y-m-d', $this->birthdate);
             $debut = $createFromFormat('Y-m-d', $this->debut);
             $image = $this->image;
-            $lastName = $this->lastName;
-            $lastName = $this->lastName;
+            $number = $this->number;
+            $stats = $this->stats->id;
 
             $command->bind_param('i', $id);
             $result = $command->execute();
@@ -175,7 +176,7 @@ require_once('exceptions/recordnotfoundexception.php');
             $debut = $createFromFormat('Y-m-d', $this->debut);
             $image = $this->image;
             $number = $this->number;
-            $stats = $this->stats;
+            $stats = $this->stats->id;
             $command->bind_param('issssssii',  $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
             $command = $connection->prepare($statement);
             $result = $command->execute();

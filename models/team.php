@@ -34,7 +34,7 @@ class Team {
             $this->name = "";
             $this->category = new Category();
             $this->coach = new Coach();
-            $this->stats = new Stats();
+            $this->stats = new TeamStats();
         }
 
         if(func_num_args() == 1) {
@@ -50,7 +50,7 @@ class Team {
                 $this->name = $name;
                 $this->category = new Category($category);
                 $this->coach = new Coach($coach);
-                $this->stats = new Stats($stats);
+                $this->stats = new TeamStats($stats);
             } 
             else 
             {
@@ -61,7 +61,7 @@ class Team {
             $connection->close();
         }
 
-        if(func_num_args() == 3) {
+        if(func_num_args() == 5) {
             $this->id = func_get_arg(0);
             $this->name = func_get_arg(1);
             $this->category = func_get_arg(2);
@@ -89,7 +89,7 @@ class Team {
         $connection->close();
     }
 
-    public function getAllTeams()
+    public function getAll()
     {
         $allTeams = array();
         $connection = MySqlConnection::getConnection();
