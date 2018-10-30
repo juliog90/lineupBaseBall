@@ -12,7 +12,6 @@ class Team {
     private $name; 
     private $category; 
     private $coach; 
-    private $stats; 
 
     public function getId() { return $this->id; }
 
@@ -25,16 +24,12 @@ class Team {
     public function getCoach() { return $this->coach; }
     public function setCoach($coach) { $this->coach = $coach; }
 
-    public function getStats() { return $this->stats; }
-    public function setStats($stats) { $this->stats = $stats; }
-
     public function __construct() {
         if(func_num_args() == 0) {
             $this->id = 0;
             $this->name = "";
             $this->category = new Category();
             $this->coach = new Coach();
-            $this->stats = new TeamStats();
         }
 
         if(func_num_args() == 1) {
@@ -49,16 +44,13 @@ class Team {
                 $this->id = $id;
                 $this->name = $name;
                 $this->category = new Category($category);
-                /* $this->coach = new Coach($coach); */
-                $this->coach = null;
+                $this->coach = new Coach($coach);
             } 
             else 
             {
                 throw new RecordNotFoundException(func_get_arg(0));
             }
             
-            /* $this->stats = new TeamStats($stats); */
-
             mysqli_stmt_close($command);
             $connection->close();
         }
@@ -68,7 +60,6 @@ class Team {
             $this->name = func_get_arg(1);
             $this->category = func_get_arg(2);
             $this->coach = func_get_arg(3);
-            $this->stats = func_get_arg(4);
         }
     }
 
@@ -81,10 +72,10 @@ class Team {
         $teamId = $this->id;
         $command->bind_param('i', $teamId);
         $command->execute();
-        $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
+        $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
         while($command->fetch())
         {
-            array_push($teamPlayers, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats));
+            array_push($teamPlayers, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number));
         }
 
         mysqli_stmt_close($command);
@@ -99,10 +90,10 @@ class Team {
         $command->prepare($query);
         $command->execute();
         // placeholder database fetching
-        $command->bind_result($id, $name, $category, $coach, $stats);
+        $command->bind_result($id, $name, $category, $coach);
         while($command->fetch())
         {
-            array_push($allTeams, new Team($id, $name, $category, $coach, $stats));
+            array_push($allTeams, new Team($id, $name, $category, $coach));
         }
 
         mysqli_stmt_close($command);
@@ -138,7 +129,6 @@ class Team {
             'name' => $this->name,
             'category' => json_decode($this->category->toJson()),
             'coach' => json_decode($this->coach->toJson()),
-            'stats' => json_decode($this->stats->toJson()),
             'players' => json_decode($this->getTeamPlayersToJson())));
     }
 
@@ -147,8 +137,7 @@ class Team {
             'id'=>$this->id,
             'name'=>$this->name,
             'category'=>json_decode($this->category->toJson()),
-            'coach' => json_decode($this->coach->toJson()), 
-            'stats' => json_decode($this->stats->toJson()) 
+            'coach' => json_decode($this->coach->toJson());
         ));
     }
 
@@ -169,14 +158,13 @@ class Team {
     public function edit()
     {
         $connection = MySqlConnection::getConnection();
-        $statement = 'editTeam(?, ?, ?, ?, ?)';
+        $statement = 'editTeam(?, ?, ?, ?)';
         $command = $connection->prepare($statement);
         $id = $this->id;
         $name = $this->name;
         $categoryId = $this->category->id;
         $coachId = $this->coach->id;
-        $statsId = $this->stats->id;
-        $command->bind_param('isiii', $id, $name, $categoryId, $coachId, $statsId);
+        $command->bind_param('isii', $id, $name, $categoryId, $coachId);
         $result = $command->execute();
         mysqli_stmt_close($command);
         $connection->close();
