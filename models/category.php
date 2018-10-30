@@ -1,6 +1,6 @@
 <?php
 
-require_once('models/category.php');
+require_once('connection.php');
 require_once('exceptions/recordnotfoundexception.php');
 
 class Category
@@ -22,7 +22,7 @@ class Category
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'getCategory(?)';
+            $query = 'select catId, catName from categories where catId = ?';
             $command = $connection->prepare($query);
             $id = func_get_arg(0);
             $command->bind_param('s', $id);
@@ -59,7 +59,7 @@ class Category
     public function remove()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'rmCategory(?)';    
+        $statement = 'delete from categories where catId = ?';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);

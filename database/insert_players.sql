@@ -1,5 +1,5 @@
 insert into players(perId, staId, teaId, plaNickname, plaBirthdate, plaDebut, plaImage, plaNumber) values
-(5, 1, 'elZavala', '' )
+(5, 1, 'elZavala', 'image1' )
 (6, 1)
 (7, 1)
 (8, 1)

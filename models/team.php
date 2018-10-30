@@ -39,23 +39,25 @@ class Team {
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'getTeam(?)';
+            $query = 'select teaId, teaName, catId, coaId from teams where teaId = ?';
             $command = $connection->prepare($query);
             $idTemp = func_get_arg(0);
             $command->bind_param('i', $idTemp);
             $command->execute();
-            $command->bind_result($id, $name, $category, $coach, $stats);
+            $command->bind_result($id, $name, $category, $coach);
             if($command->fetch()) {
                 $this->id = $id;
                 $this->name = $name;
                 $this->category = new Category($category);
-                $this->coach = new Coach($coach);
-                $this->stats = new TeamStats($stats);
+                /* $this->coach = new Coach($coach); */
+                $this->coach = null;
             } 
             else 
             {
                 throw new RecordNotFoundException(func_get_arg(0));
             }
+            
+            /* $this->stats = new TeamStats($stats); */
 
             mysqli_stmt_close($command);
             $connection->close();
@@ -145,8 +147,8 @@ class Team {
             'id'=>$this->id,
             'name'=>$this->name,
             'category'=>json_decode($this->category->toJson()),
-            'coach' => json_decode($this->coach->toJson()),
-            'stats' => json_decode($this->stats->toJson()),
+            'coach' => json_decode($this->coach->toJson()), 
+            'stats' => json_decode($this->stats->toJson()) 
         ));
     }
 
