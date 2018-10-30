@@ -16,7 +16,6 @@ class Player {
     private $debut;
     private $image;
     private $number;
-    private $stats;
 
     public function getId() { return $this->id; }
 
@@ -44,9 +43,6 @@ class Player {
     public function getNumber() { return $this->number; }
     public function setNumber($number) { $this->number = $number; }
 
-    public function getStats() { return $this->stats; }
-    public function setStats($stats) { $this->stats = $stats; }
-
     public function getAge() { 
         $actualDate = new DateTime();
         $timeInterval = $actualDate->diff($this->birthdate);
@@ -64,17 +60,17 @@ class Player {
             $this->debut = new DateTime();
             $this->image = "";
             $this->number = 0;
-            $this->stats = new PlayerStats();
             }
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'getPlayer(?)';
+            $query = 'select pl.plaId, pl.teaId, plaNickname, p.perFirstName, p.perLastName, plaBirthdate, plaDebut, plaImage, plaNumber 
+                      from persons as p inner join players as pl on p.perId = pl.perId where pl.plaId = ?';
             $command = $connection->prepare($query);
             $idTemp = func_get_arg(0);
             $command->bind_param('i', $idTemp);
             $command->execute();
-            $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
+            $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
             if($command->fetch()) {
                 $this->id = $id;
                 $this->team = new Team($team);
@@ -85,16 +81,18 @@ class Player {
                 $this->debut = DateTime::createFromFormat('Y-m-d', $debut);
                 $this->image = $image;
                 $this->number = $number;
-                $this->stats = new Stats();
             } 
                 else 
                     throw new RecordNotFoundException(func_get_arg(0));
 
                 mysqli_stmt_close($command);
                 $connection->close();
-            }
 
-        if(func_num_args() == 10) {
+        }
+
+
+
+        if(func_num_args() == 9) {
             $this->id = func_get_arg(0);
             $this->team = new Team(func_get_arg(1));
             $this->nickname = func_get_arg(2);
@@ -104,7 +102,6 @@ class Player {
             $this->debut = func_get_arg(6);
             $this->image = func_get_arg(7);
             $this->number = func_get_arg(8);
-            $this->stats = func_get_arg(9);
         }
     }
 
@@ -115,10 +112,10 @@ class Player {
         $query = 'getAllPlayers()';
         $command = $connecion->prepare($query);
         $command->execute();  
-        $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
+        $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
         while($command->fetch())
         {
-            array_push($players, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats));
+            array_push($players, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number));
         }
 
         mysqli_stmt_close($command);
@@ -143,7 +140,7 @@ class Player {
     public function edit()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'editCategory(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $statement = 'editCategory(?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $command = $connection->prepare($statement);
         $id = $this->id;
         $team = $this->team->id;
@@ -154,7 +151,6 @@ class Player {
         $debut = $createFromFormat('Y-m-d', $this->debut);
         $image = $this->image;
         $number = $this->number;
-        $stats = $this->stats->id;
 
         $command->bind_param('i', $id);
         $result = $command->execute();
@@ -176,8 +172,7 @@ class Player {
         $debut = $createFromFormat('Y-m-d', $this->debut);
         $image = $this->image;
         $number = $this->number;
-        $stats = $this->stats->id;
-        $command->bind_param('issssssii',  $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number, $stats);
+        $command->bind_param('issssssii',  $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
         $command = $connection->prepare($statement);
         $result = $command->execute();
         mysqli_stmt_close($command);
@@ -211,7 +206,6 @@ class Player {
             'debut'=>$this->debut->format('Y-m-d'),
             'image'=>$this->image,
             'number'=>$this->number,
-            'stats'=> json_decode($this->stats->toJson()),
             'age' => $this->getAge()
         ));
     }
