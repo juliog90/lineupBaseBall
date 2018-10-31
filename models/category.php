@@ -57,20 +57,35 @@ class Category
         mysqli_stmt_close($command);
         $connection->close();
     }
-/* Esto seria un poco complicado al querer eliminar una categoria 
-   ya que afectara a los player que esten dentro del id
+
     public function remove()
     {
+        // update teams before delete
+        $connection = MySqlConnection::getConnection(); 
+        $statement = 'update teams set catId = ? where catId = ?';    
+        $command = $connection->prepare($statement);
+        $id = $this->id;
+        $teamCategoryId = 1;// harcoded 1 means no category
+        $command->bind_param('ii', $teamCategoryId, $id); 
+        $result = $command->execute();
+        var_dump($result);
+
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        // delete category then
         $connection = MySqlConnection::getConnection(); 
         $statement = 'delete from categories where catId = ?';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
         $result = $command->execute();
+        var_dump($result);
 
         mysqli_stmt_close($command);
         $connection->close();
-    }*/
+    
+    }
 
     public function edit()
     {
@@ -90,7 +105,7 @@ class Category
     {
         $categories = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'select catId, catName from categories';
+        $query = 'select catId, catName from categories where catId != 1';
         $command = $connection->prepare($query);
         $command->execute();
         $command->bind_result($id, $name);
