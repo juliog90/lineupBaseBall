@@ -46,16 +46,19 @@ class Category
     public function add()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'addCategory(?)';
+        $statement = 'insert into categories (catName) values (?)';
         $command = $connection->prepare($statement);
+	var_dump($this->name);
         $name = $this->name;
+	var_dump($name);
         $command->bind_param('s', $name);
         $result = $command->execute();
 
         mysqli_stmt_close($command);
         $connection->close();
     }
-
+/* Esto seria un poco complicado al querer eliminar una categoria 
+   ya que afectara a los player que esten dentro del id
     public function remove()
     {
         $connection = MySqlConnection::getConnection(); 
@@ -67,16 +70,16 @@ class Category
 
         mysqli_stmt_close($command);
         $connection->close();
-    }
+    }*/
 
     public function edit()
     {
         $connection = MySqlConnection::getConnection(); 
-        $statement = 'editCategory(?, ?)';
+        $statement = 'update categories set catName = ? where catId = ?';
         $command = $connection->prepare($statement);
         $id = $this->id;
         $name = $this->name;
-        $command->bind_param('is', $id, $name);
+        $command->bind_param('si', $name, $id); 
         $result = $command->execute();
 
         mysqli_stmt_close($command);
@@ -87,14 +90,16 @@ class Category
     {
         $categories = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'getCategories()';
-        $command = $connection->prepare($statment);
+        $query = 'select catId, catName from categories';
+        $command = $connection->prepare($query);
         $command->execute();
         $command->bind_result($id, $name);
 
-        while ($command->fetch) {
+        while ($command->fetch()) {
            array_push($categories, new Category($id, $name)); 
         }
+
+	return $categories;
     }
 
     public static function getAllToJson()
@@ -107,8 +112,10 @@ class Category
         }
 
         return json_encode(array(
-            'categories' => json_decode($categoriesJson)
+            'categories' => $categoriesJson
         ));
+
+	return $categoriesJson;
     }
 
     public function toJson() {
