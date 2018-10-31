@@ -22,7 +22,7 @@ class Category
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select catId, catName from categories where catId = ?';
+            $query = 'select catId, catName from categories where catId = ? and catId != 1';
             $command = $connection->prepare($query);
             $id = func_get_arg(0);
             $command->bind_param('s', $id);
@@ -48,9 +48,7 @@ class Category
         $connection = MySqlConnection::getConnection(); 
         $statement = 'insert into categories (catName) values (?)';
         $command = $connection->prepare($statement);
-	var_dump($this->name);
         $name = $this->name;
-	var_dump($name);
         $command->bind_param('s', $name);
         $result = $command->execute();
 
