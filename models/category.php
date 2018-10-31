@@ -56,6 +56,8 @@ class Category
 
         mysqli_stmt_close($command);
         $connection->close();
+
+        return $result;
     }
 
     public function remove()
@@ -67,8 +69,7 @@ class Category
         $id = $this->id;
         $teamCategoryId = 1;// harcoded 1 means no category
         $command->bind_param('ii', $teamCategoryId, $id); 
-        $result = $command->execute();
-        var_dump($result);
+        $result1 = $command->execute();
 
         mysqli_stmt_close($command);
         $connection->close();
@@ -79,11 +80,12 @@ class Category
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
-        $result = $command->execute();
-        var_dump($result);
+        $result2 = $command->execute();
 
         mysqli_stmt_close($command);
         $connection->close();
+
+        return $result1 && $result2;
     
     }
 
@@ -99,6 +101,8 @@ class Category
 
         mysqli_stmt_close($command);
         $connection->close();
+
+        return $result;
     }
 
     public static function getAll()
