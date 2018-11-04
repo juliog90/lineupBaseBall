@@ -8,6 +8,7 @@ require_once('exceptions/recordnotfoundexception.php');
 class Player {
 
     private $id;
+    private $status;
     private $team;
     private $nickname;
     private $firstName; 
@@ -21,6 +22,9 @@ class Player {
 
     public function getTeam() { return $this->team; }
     public function setTeam($team) { $this->team = $team; }
+
+    public function getStatus() { return $this->status; }
+    public function setStatus($status) { $this->status = $status; }
 
     public function getNickname() { return $this->nickname; }
     public function setNickname($nickname) { $this->nickname = $nickname; }
@@ -42,12 +46,6 @@ class Player {
 
     public function getNumber() { return $this->number; }
     public function setNumber($number) { $this->number = $number; }
-
-    public function getAge() { 
-        $actualDate = new DateTime();
-        $timeInterval = $actualDate->diff($this->birthdate);
-        return $timeInterval->format('%y');
-    }
 
     public function __construct() {
         if(func_num_args() == 0) {
@@ -92,16 +90,17 @@ class Player {
 
 
 
-        if(func_num_args() == 9) {
+        if(func_num_args() == 10) {
             $this->id = func_get_arg(0);
-            $this->team = new Team(func_get_arg(1));
-            $this->nickname = func_get_arg(2);
+            $this->status = func_get_arg(1);
+            $this->team = new Team(func_get_arg(2));
+            $this->nickname = func_get_arg(3);
             $this->firstName = func_get_arg(3);
-            $this->lastName = func_get_arg(4);
-            $this->birthdate = func_get_arg(5);
-            $this->debut = func_get_arg(6);
-            $this->image = func_get_arg(7);
-            $this->number = func_get_arg(8);
+            $this->lastName = func_get_arg(5);
+            $this->birthdate = func_get_arg(6);
+            $this->debut = func_get_arg(7);
+            $this->image = func_get_arg(8);
+            $this->number = func_get_arg(9);
         }
     }
 
@@ -202,11 +201,10 @@ class Player {
             'nickname'=>$this->nickname,
             'firstName'=>$this->firstName,
             'lastName'=>$this->lastName,
-            'birthdate'=>$this->birthdate->format('Y-m-d'),
-            'debut'=>$this->debut->format('Y-m-d'),
+            'birthdate'=>$this->birthdate,
+            'debut'=>$this->debut,
             'image'=>$this->image,
-            'number'=>$this->number,
-            'age' => $this->getAge()
+            'number'=>$this->number
         ));
     }
 }

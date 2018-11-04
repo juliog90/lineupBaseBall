@@ -2,7 +2,6 @@
 
 require_once('category.php');
 require_once('coach.php');
-require_once('teamstats.php');
 require_once('connection.php');
 require_once('exceptions/recordnotfoundexception.php');
 
@@ -12,6 +11,7 @@ class Team {
     private $name; 
     private $category; 
     private $coach; 
+    private $status;
 
     public function getId() { return $this->id; }
 
@@ -24,27 +24,32 @@ class Team {
     public function getCoach() { return $this->coach; }
     public function setCoach($coach) { $this->coach = $coach; }
 
+    public function getStatus() { return $this->status; }
+    public function setStatus($status) { $this->status = $status; }
+
     public function __construct() {
         if(func_num_args() == 0) {
             $this->id = 0;
             $this->name = "";
             $this->category = new Category();
-            $this->coach = new Coach();
+            $this->coach = new Coach(3);
+            $this->status = 1;
         }
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select teaId, teaName, catId, coaId from teams where teaId = ?';
+            $query = 'select teaId, staId, teaName, catId, coaId from teams where teaId = ? and teaId != 1';
             $command = $connection->prepare($query);
             $idTemp = func_get_arg(0);
             $command->bind_param('i', $idTemp);
             $command->execute();
-            $command->bind_result($id, $name, $category, $coach);
+            $command->bind_result($id, $status, $name, $category, $coach);
             if($command->fetch()) {
                 $this->id = $id;
                 $this->name = $name;
                 $this->category = new Category($category);
                 $this->coach = new Coach($coach);
+                $this->status = $status;
             } 
             else 
             {
@@ -57,43 +62,46 @@ class Team {
 
         if(func_num_args() == 5) {
             $this->id = func_get_arg(0);
-            $this->name = func_get_arg(1);
-            $this->category = func_get_arg(2);
-            $this->coach = func_get_arg(3);
+            $this->status = func_get_arg(1);
+            $this->name = func_get_arg(2);
+            $this->category = func_get_arg(3);
+            $this->coach = func_get_arg(4);
         }
     }
 
-    public function getTeamPlayers()
+    public function getPlayers()
     {
         $teamPlayers = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'getTeamPlayers(?)';
+        $query = 'select plaId, staId, teaId, plaNickname, perFirstName, perLastName, plaBirthdate,plaDebut, plaImage, plaNumber from players inner join persons on players.perId = persons.perId where teaId = ?';
         $command = $connection->prepare($query);
         $teamId = $this->id;
         $command->bind_param('i', $teamId);
         $command->execute();
-        $command->bind_result($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
+        $command->bind_result($id, $status, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number);
         while($command->fetch())
         {
-            array_push($teamPlayers, new Player($id, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number));
+            array_push($teamPlayers, new Player($id, $status, $team, $nickname, $firstName, $lastName, $birthdate, $debut, $image, $number));
         }
 
         mysqli_stmt_close($command);
         $connection->close();
+
+        return $teamPlayers;
     }
 
     public function getAll()
     {
         $allTeams = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'getAllTeams()';
-        $command->prepare($query);
+        $query = 'select teaId, staId, teaName, catId, coaId from teams where catId != 1';
+        $command = $connection->prepare($query);
         $command->execute();
         // placeholder database fetching
-        $command->bind_result($id, $name, $category, $coach);
+        $command->bind_result($id, $status, $name, $category, $coach);
         while($command->fetch())
         {
-            array_push($allTeams, new Team($id, $name, $category, $coach));
+            array_push($allTeams, new Team($id, $status, $name, new Category($category), new Coach($coach)));
         }
 
         mysqli_stmt_close($command);
@@ -102,52 +110,102 @@ class Team {
         return $allTeams;
     }
 
-    public function getTeamPlayersToJson()
+    public static function getAllToJson()
+    {
+        $teamsJson = array();
+        $teams = self::getAll();
+
+        foreach ($teams as $value) {
+            array_push($teamsJson, json_decode($value->toJson()));    
+        }
+
+        return json_encode(array(
+            'teams' => $teamsJson
+        ));
+
+	return $teamsJson;
+    }
+
+    public function getPlayersToJson()
     {
         $playersJson = array();
 
         foreach(self::getPlayers() as $player)
         {
-            array_push($playersJson, $player->toJson());
+            array_push($playersJson, json_decode($player->toJson()));
         }
 
-        return $playersJson;
+        return json_encode($playersJson);
     }
 
-    public static function getFullToJson()
-    {
-        $players = array();
+    /* public static function getFullToJson() */
+    /* { */
+        /* $players = array(); */
+        /* $jsonTemp = $this->getPlayersToJson(); */
 
-        foreach($this->getTeamPlayersToJson() as $player)
-        {
-            array_push($players, json_decode($player->toJson()));
-        }
+        /* foreach($jsonTemp as $player) */
+        /* { */
+            /* array_push($players, json_decode($player->toJson())); */
+        /* } */
 
-        return json_encode(
-            array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'category' => json_decode($this->category->toJson()),
-            'coach' => json_decode($this->coach->toJson()),
-            'players' => json_decode($this->getTeamPlayersToJson())));
-    }
+/*         return json_encode( */
+            /* array( */
+            /* 'id' => $this->id, */
+            /* 'name' => $this->name, */
+            /* /1* 'category' => json_decode($this->category->toJson()), *1/ */
+            /* 'coach' => json_decode($this->coach->toJson()), */
+            /* 'players' => json_decode($this->getTeamPlayersToJson()))); */
+    /* /1* } *1/ */
 
     public function toJson() {
         return json_encode(array(
             'id'=>$this->id,
+            'status' => $this->status,
             'name'=>$this->name,
             'category'=>json_decode($this->category->toJson()),
-            'coach' => json_decode($this->coach->toJson());
+            'coach' => json_decode($this->coach->toJson())
         ));
     }
 
     public function remove()
     {
-        $connection = MySqlConnection::getConnection();
-        $statement = 'removeTeam(?)';
+        // update teams before delete
+        $connection = MySqlConnection::getConnection(); 
+        $statement = 'update players set teaId = ? where teaId = ?';    
+        $command = $connection->prepare($statement);
+        $id = $this->id;
+        $playerTeamId = 1;// harcoded 1 means no category
+        $command->bind_param('ii', $playerTeamId, $id); 
+        $result1 = $command->execute();
+
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        // delete category then
+        $connection = MySqlConnection::getConnection(); 
+        $statement = 'delete from teams where teaId = ?';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
+        $result2 = $command->execute();
+
+        mysqli_stmt_close($command);
+        $connection->close();
+
+        return $result1 && $result2;
+    }
+
+    public function edit()
+    {
+        $connection = MySqlConnection::getConnection();
+        $statement = 'update teams set staId = ?, teaName = ?, catId = ?, coaId = ? where teaId = ?';
+        $command = $connection->prepare($statement);
+        $id = $this->id;
+        $status = $this->status;
+        $name = $this->name;
+        $categoryId = $this->category->getId();
+        $coachId = $this->coach->getId();
+        $command->bind_param('isiii',$status, $name, $categoryId, $coachId, $id);
         $result = $command->execute();
         mysqli_stmt_close($command);
         $connection->close();
@@ -155,17 +213,20 @@ class Team {
         return $result;
     }
 
-    public function edit()
+    public function add()
     {
         $connection = MySqlConnection::getConnection();
-        $statement = 'editTeam(?, ?, ?, ?)';
+        $statement = 'insert into teams(staId, teaName, catId, coaId) values(?, ?, ?, ?)';
         $command = $connection->prepare($statement);
-        $id = $this->id;
+        $status = $this->status;
         $name = $this->name;
-        $categoryId = $this->category->id;
-        $coachId = $this->coach->id;
-        $command->bind_param('isii', $id, $name, $categoryId, $coachId);
+        $categoryId = $this->category->getId();
+        $coachId = $this->coach->getId();
+
+        $command->bind_param('isii', $status, $name, $categoryId, $coachId);
+
         $result = $command->execute();
+
         mysqli_stmt_close($command);
         $connection->close();
 
