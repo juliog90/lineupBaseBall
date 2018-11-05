@@ -108,24 +108,20 @@ class Season
 
     public static function getAllToJson()
     {
-        $seasons = array();
+        $seasonsJson = array();
         $seasons = self::getAll();
 
         foreach ($seasons as $value) {
-            array_push($seasons, json_decode($value->toJson()));    
+            array_push($seasonsJson, json_decode($value->toJson()));    
         }
 
-        return json_encode(array(
-            'seasons' => $seasons
-        ));
-
-	return $seasons;
+        return json_encode(array('seasons' => $seasonsJson));
     }
 
     public function toJson() {
         return json_encode (array(
         'id'=>$this->id,
-        'name'=>$this->name,
+        'name'=>$this->name
         ));
 
     }
