@@ -1,9 +1,8 @@
 <?php
-    require_once('ConnectionMySql.php');
-    require_once("Person.php");
+    require_once('connection.php');
+    require_once("person.php");
     require_once('team.php');
 
-    //require_once("team.php"); cuando haya team
     class Player
     {
         #attributes
