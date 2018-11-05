@@ -1,1 +1,1 @@
-insert into categories(catName) values('No Category'),('Biberon'),('Zapeta'),('Escuelita'),('Peewee'),('Infantil'),('Pony'),('Colt'),('Juvenil');
+insert into categories(catName) values('Biberon'),('Zapeta'),('Escuelita'),('Peewee'),('Infantil'),('Pony'),('Colt'),('Juvenil');
