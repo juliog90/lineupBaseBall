@@ -22,7 +22,7 @@ class Category
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select catId, catName from categories where catId = ? and catId != 1';
+            $query = 'select catId, catName from categories where catId = ?';
             $command = $connection->prepare($query);
             $id = func_get_arg(0);
             $command->bind_param('s', $id);
@@ -60,31 +60,18 @@ class Category
 
     public function remove()
     {
-        // update teams before delete
-        $connection = MySqlConnection::getConnection(); 
-        $statement = 'update teams set catId = ? where catId = ?';    
-        $command = $connection->prepare($statement);
-        $id = $this->id;
-        $teamCategoryId = 1;// harcoded 1 means no category
-        $command->bind_param('ii', $teamCategoryId, $id); 
-        $result1 = $command->execute();
-
-        mysqli_stmt_close($command);
-        $connection->close();
-
         // delete category then
         $connection = MySqlConnection::getConnection(); 
         $statement = 'delete from categories where catId = ?';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
-        $result2 = $command->execute();
+        $result = $command->execute();
 
         mysqli_stmt_close($command);
         $connection->close();
 
-        return $result1 && $result2;
-    
+        return $result;
     }
 
     public function edit()
@@ -107,7 +94,7 @@ class Category
     {
         $categories = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'select catId, catName from categories where catId != 1';
+        $query = 'select catId, catName from categories';
         $command = $connection->prepare($query);
         $command->execute();
         $command->bind_result($id, $name);

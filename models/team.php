@@ -38,7 +38,7 @@ class Team {
 
         if(func_num_args() == 1) {
             $connection = MySqlConnection::getConnection();
-            $query = 'select teaId, staId, teaName, catId, coaId from teams where teaId = ? and teaId != 1';
+            $query = 'select teaId, staId, teaName, catId, coaId from teams where teaId = ?';
             $command = $connection->prepare($query);
             $idTemp = func_get_arg(0);
             $command->bind_param('i', $idTemp);
@@ -94,7 +94,7 @@ class Team {
     {
         $allTeams = array();
         $connection = MySqlConnection::getConnection();
-        $query = 'select teaId, staId, teaName, catId, coaId from teams where catId != 1';
+        $query = 'select teaId, staId, teaName, catId, coaId from teams';
         $command = $connection->prepare($query);
         $command->execute();
         // placeholder database fetching
@@ -169,30 +169,18 @@ class Team {
 
     public function remove()
     {
-        // update teams before delete
-        $connection = MySqlConnection::getConnection(); 
-        $statement = 'update players set teaId = ? where teaId = ?';    
-        $command = $connection->prepare($statement);
-        $id = $this->id;
-        $playerTeamId = 1;// harcoded 1 means no category
-        $command->bind_param('ii', $playerTeamId, $id); 
-        $result1 = $command->execute();
-
-        mysqli_stmt_close($command);
-        $connection->close();
-
-        // delete category then
+        // delete category 
         $connection = MySqlConnection::getConnection(); 
         $statement = 'delete from teams where teaId = ?';    
         $command = $connection->prepare($statement);
         $id = $this->id;
         $command->bind_param('i', $id);
-        $result2 = $command->execute();
+        $result = $command->execute();
 
         mysqli_stmt_close($command);
         $connection->close();
 
-        return $result1 && $result2;
+        return $result;
     }
 
     public function edit()
