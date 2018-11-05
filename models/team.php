@@ -167,7 +167,7 @@ class Team {
         ));
     }
 
-    public function remove()
+    public function delete()
     {
         // delete category 
         $connection = MySqlConnection::getConnection(); 

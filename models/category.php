@@ -58,7 +58,7 @@ class Category
         return $result;
     }
 
-    public function remove()
+    public function delete()
     {
         // delete category then
         $connection = MySqlConnection::getConnection(); 
