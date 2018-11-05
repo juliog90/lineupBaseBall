@@ -118,8 +118,6 @@ class Category
         return json_encode(array(
             'categories' => $categoriesJson
         ));
-
-	return $categoriesJson;
     }
 
     public function toJson() {
