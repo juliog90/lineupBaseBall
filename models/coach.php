@@ -21,22 +21,21 @@
                 #get connection
                 $connection = MySqlConnection::getConnection();
                 #query
-                $query = 'select * from coaches c where coaId = ?';
+                $query = 'select coaId, perId from coaches where coaId = ?';
                 #prepare statement
                 $command = $connection->prepare($query);
+                #id
+                $id = func_get_arg(0);
                 #params
-                $command->bind_param('i',func_get_arg(0));
+                $command->bind_param('i',$id);
                 #execute
                 $command->execute();
                 #bind params
                 $command->bind_result($id, $person);
-                //no funciona todavía!!!------------------------
                 if($command->fetch()){
                     $this->id = $id;
                     $this->person = new Person($person);
-                
                     }
-                
                 }
             
             if(func_num_args() == 2){

@@ -24,7 +24,9 @@
                 $connection=MySqlConnection::getConnection();
                 $query='select perId, perFirstName, perLastName from persons where perId = ?';
                 $command=$connection->prepare($query);
-                $command->bind_param('i',func_get_arg(0));
+                // se queja el interprete de php "solo variables"
+                $id = func_get_arg(0);
+                $command->bind_param('i', $id);
                 $command->execute();
                 $command->bind_result($id,$firstName,$lastName);
                 if($command->fetch())

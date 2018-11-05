@@ -32,7 +32,7 @@ class Team {
             $this->id = 0;
             $this->name = "";
             $this->category = new Category();
-            $this->coach = new Coach(3);
+            $this->coach = new Coach();
             $this->status = 1;
         }
 
@@ -97,7 +97,6 @@ class Team {
         $query = 'select teaId, staId, teaName, catId, coaId from teams';
         $command = $connection->prepare($query);
         $command->execute();
-        // placeholder database fetching
         $command->bind_result($id, $status, $name, $category, $coach);
         while($command->fetch())
         {
