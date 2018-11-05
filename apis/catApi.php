@@ -162,7 +162,7 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
 
 	if($right)
 	{		
-	    if($c->remove())
+	    if($c->delete())
 	    {       
 		echo json_encode(array(
 		    'status' => 0,
