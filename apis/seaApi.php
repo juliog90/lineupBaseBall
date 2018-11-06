@@ -146,7 +146,7 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
 
 	try
 	{
-	    $c = new Season($post_vars['idSeason']);
+	    $s = new Season($post_vars['idSeason']);
 	}	
 	catch(RecordNotFoundException $ex)
 	{
@@ -162,7 +162,7 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
 	{		
 	    try
 	    {       
-                if($c->delete())
+                if($s->delete())
                 {
                     echo json_encode(array(
                         'status' => 0,
