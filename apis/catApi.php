@@ -162,19 +162,42 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
 
 	if($right)
 	{		
-	    if($c->delete())
+	    try
 	    {       
-		echo json_encode(array(
-		    'status' => 0,
-		    'message' => 'Category deleted successfully'
-		));
+                if($c->delete())
+                {
+                    echo json_encode(array(
+                        'status' => 0,
+                        'message' => 'Team deleted successfully'
+                    ));
+                }
+                else
+                {
+                    echo json_encode(array(
+                        'status' => 2,
+                        'errorMessage' => 'Could not delete team'
+                    ));
+
+                }
 	    }       
-	    else
+	    catch(mysqli_sql_exception $ex)
 	    {   
-		echo json_encode(array(
-		    'status' => 2,
-		    'errorMessage' => 'Could not delete category'
-		));
+                $error = $ex->getCode();
+                var_dump($error);
+                if($error == 1451)
+                {
+                    echo json_encode(array(
+                        'status' => 999,
+                        'errorMessage' => 'Delete Category Teams',
+                    ));
+                }
+                else
+                {
+                    echo json_encode(array(
+                        'status' => 3,
+                        'errorMessage' => $ex->getMessage(),
+                    ));
+                }
 	    }   
 	}
     }
