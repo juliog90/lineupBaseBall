@@ -79,7 +79,12 @@
                     $this->image = $image;
                     $this->playerNumber = $playerNumber;
                 }
+                else 
+                {
+                    throw new RecordNotFoundException(func_get_arg(0));
+                }
             }
+
             if(func_num_args() == 9){
                 $this->id = func_get_arg(0);
                 $this->person = func_get_arg(1);

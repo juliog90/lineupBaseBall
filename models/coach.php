@@ -36,7 +36,11 @@
                     $this->id = $id;
                     $this->person = new Person($person);
                     }
+                else 
+                {
+                    throw new RecordNotFoundException(func_get_arg(0));
                 }
+            }
             
             if(func_num_args() == 2){
                 $this->id = func_get_arg(0);
