@@ -81,8 +81,6 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT')
     parse_str(file_get_contents("php://input"), $jsonData);
     $post_vars = json_decode($jsonData['data'], true);
 
-    var_dump($post_vars);
-
     if(isset($post_vars['idCategory']) && isset($post_vars['nameCategory'])) 
     {
         $parametersOk = true;
@@ -183,7 +181,6 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
 	    catch(mysqli_sql_exception $ex)
 	    {   
                 $error = $ex->getCode();
-                var_dump($error);
                 if($error == 1451)
                 {
                     echo json_encode(array(

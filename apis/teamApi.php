@@ -51,7 +51,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
        try {
            $cat = new Category($_POST['categoryTeam']);
            $t->setCategory($cat);
-           echo "verga";
            
        } catch (RecordNotFoundException $ex) {
                    $right = false;
@@ -66,7 +65,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
            try {
                $co = new Coach($_POST['coachTeam']);
                $t->setCoach($co);
-           echo "\nverga";
                
            } catch (RecordNotFoundException $ex) {
                $right = false;
