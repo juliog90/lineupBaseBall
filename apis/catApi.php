@@ -173,7 +173,7 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE')
                 {
                     echo json_encode(array(
                         'status' => 2,
-                        'errorMessage' => 'Could not delete team'
+                        'errorMessage' => 'Could not delete category'
                     ));
 
                 }
